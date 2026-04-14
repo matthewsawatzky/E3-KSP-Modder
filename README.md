@@ -9,7 +9,7 @@ A local web-based mod manager for Kerbal Space Program. Browse and toggle mods i
 - Log viewer with error/warning filters
 - Mod error scan — groups log errors by the mod that caused them
 - Save game browser with one-click backups
-- Export your full mod list to a `.txt` file
+- Export your full mod list to a `.txt` file (Useful For Getting AI to trouble shoot)
 
 ---
 
