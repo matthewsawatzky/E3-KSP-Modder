@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KSP Moder</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <nav class="topnav">
+    <div class="brand">KSP Moder</div>
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="mods">Mods</button>
+      <button class="tab-btn" data-tab="saves">Saves</button>
+      <button class="tab-btn" data-tab="log">Log</button>
+      <button class="tab-btn" data-tab="info">Info</button>
+      <button class="tab-btn" data-tab="settings">Settings</button>
+    </div>
+  </nav>
+
+  <div id="toast-container"></div>
+  <div id="spinner" class="spinner hidden"></div>
+
+  <!-- Mods Tab -->
+  <div class="tab-content active" id="tab-mods">
+    <div id="mods-no-path" class="no-path-msg hidden">
+      No KSP install selected. Go to the Settings tab to get started.
+    </div>
+    <div id="mods-content">
+      <div class="mods-header">
+        <div class="mods-stats">
+          <span id="mod-count">0 mods</span>
+          <span class="sep">|</span>
+          <span id="mod-total-size">0 MB</span>
+          <span id="mod-selected-count" class="selected-count hidden">| <span id="selected-num">0</span> selected</span>
+        </div>
+        <div class="mods-actions-row">
+          <input type="text" id="mod-search" placeholder="Search mods..." oninput="filterMods()">
+          <label class="btn btn-accent upload-btn">
+            Add Mod (.zip)
+            <input type="file" id="mod-file-input" accept=".zip" onchange="uploadMod()" hidden>
+          </label>
+          <button class="btn" onclick="exportMods()">Export List</button>
+        </div>
+      </div>
+
+      <!-- Bulk action bar -->
+      <div id="bulk-bar" class="bulk-bar hidden">
+        <div class="bulk-bar-left">
+          <label class="checkbox-wrap">
+            <input type="checkbox" id="select-all-cb" onchange="toggleSelectAll()">
+            <span>Select All</span>
+          </label>
+          <span class="bulk-count"><span id="bulk-count-num">0</span> selected</span>
+        </div>
+        <div class="bulk-bar-right">
+          <button class="btn btn-sm btn-primary" onclick="bulkAction('enable')">Enable Selected</button>
+          <button class="btn btn-sm" onclick="bulkAction('disable')">Disable Selected</button>
+          <button class="btn btn-sm btn-danger" onclick="bulkAction('remove')">Remove Selected</button>
+          <button class="btn btn-sm" onclick="clearSelection()">Clear</button>
+        </div>
+      </div>
+
+      <table class="mod-table" id="mod-table">
+        <thead>
+          <tr>
+            <th class="th-check"><input type="checkbox" id="header-select-all" onchange="toggleSelectAll()" title="Select all"></th>
+            <th>Name</th>
+            <th>Version</th>
+            <th>Size</th>
+            <th>Status</th>
+            <th>Conflict</th>
+            <th>Note</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="mod-tbody"></tbody>
+      </table>
+
+      <div class="section profiles-section">
+        <h3>Mod Profiles</h3>
+        <div class="input-row">
+          <select id="profile-select"><option value="">-- Select Profile --</option></select>
+          <button class="btn btn-primary" onclick="loadProfile()">Load</button>
+          <button class="btn btn-danger" onclick="deleteProfile()">Delete</button>
+        </div>
+        <div class="input-row" style="margin-top:8px;">
+          <input type="text" id="profile-name" placeholder="New profile name">
+          <button class="btn btn-accent" onclick="saveProfile()">Save Current as Profile</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Saves Tab -->
+  <div class="tab-content" id="tab-saves">
+    <div id="saves-no-path" class="no-path-msg hidden">
+      No KSP install selected. Go to the Settings tab to get started.
+    </div>
+    <div id="saves-content">
+      <h2>Save Games</h2>
+      <div id="saves-list" class="cards-list"></div>
+    </div>
+  </div>
+
+  <!-- Log Tab -->
+  <div class="tab-content" id="tab-log">
+    <div id="log-no-path" class="no-path-msg hidden">
+      No KSP install selected. Go to the Settings tab to get started.
+    </div>
+    <div id="log-content">
+      <div class="log-controls">
+        <button class="btn filter-btn active" data-filter="all" onclick="setLogFilter('all')">All</button>
+        <button class="btn filter-btn" data-filter="errors" onclick="setLogFilter('errors')">Errors</button>
+        <button class="btn filter-btn" data-filter="warnings" onclick="setLogFilter('warnings')">Warnings</button>
+        <button class="btn filter-btn" data-filter="errors+warnings" onclick="setLogFilter('errors+warnings')">Errors + Warnings</button>
+        <button class="btn btn-primary" onclick="loadLogs()" style="margin-left:auto;">Refresh</button>
+      </div>
+      <div id="log-info" class="log-info"></div>
+      <pre id="log-output" class="log-output"></pre>
+
+      <div class="section">
+        <div class="mod-errors-toolbar">
+          <h3>Mod Error Scan</h3>
+          <button class="btn btn-primary" onclick="scanModErrors()">Scan Log for Mod Errors</button>
+        </div>
+        <div id="mod-errors-results"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Info Tab -->
+  <div class="tab-content" id="tab-info">
+    <div id="info-no-path" class="no-path-msg hidden">
+      No KSP install selected. Go to the Settings tab to get started.
+    </div>
+    <div id="info-content">
+      <div class="section">
+        <h2>Game Info</h2>
+        <div id="info-version" class="info-block"></div>
+      </div>
+      <div class="section">
+        <h3>Disk Usage</h3>
+        <div id="disk-usage" class="disk-usage-grid"></div>
+      </div>
+      <div class="section">
+        <h3>Screenshots</h3>
+        <div id="screenshots-gallery" class="gallery"></div>
+      </div>
+      <div class="section">
+        <h3>Craft Files</h3>
+        <table class="mod-table" id="crafts-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Size</th>
+              <th>Modified</th>
+            </tr>
+          </thead>
+          <tbody id="crafts-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Tab -->
+  <div class="tab-content" id="tab-settings">
+    <h2>Settings</h2>
+
+    <div class="settings-group">
+      <h3>Game Location</h3>
+      <div id="current-path-display" class="current-path"></div>
+      <div id="game-version-display" class="game-version"></div>
+
+      <div class="subsection">
+        <h4>Detected Installs</h4>
+        <button class="btn btn-primary" onclick="detectInstalls()">Scan for KSP Installs</button>
+        <div id="installs-list" class="cards-list"></div>
+      </div>
+
+      <div class="subsection">
+        <h4>Manual Path</h4>
+        <div class="input-row">
+          <input type="text" id="manual-path" placeholder="Enter full path to KSP install folder">
+          <button class="btn btn-primary" onclick="setManualPath()">Set Path</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <h3>Appearance</h3>
+
+      <div class="setting-row">
+        <label for="accent-color-input">Accent Color</label>
+        <div class="color-picker-row">
+          <input type="color" id="accent-color-input" value="#8AC04A" onchange="previewAccentColor(this.value)">
+          <input type="text" id="accent-color-hex" value="#8AC04A" size="8" maxlength="7"
+                 oninput="onHexInput(this.value)" placeholder="#8AC04A">
+          <div class="color-presets">
+            <button class="color-swatch" style="background:#8AC04A" onclick="setAccentPreset('#8AC04A')" title="KSP Green"></button>
+            <button class="color-swatch" style="background:#4A90D9" onclick="setAccentPreset('#4A90D9')" title="Blue"></button>
+            <button class="color-swatch" style="background:#D94A4A" onclick="setAccentPreset('#D94A4A')" title="Red"></button>
+            <button class="color-swatch" style="background:#D9A04A" onclick="setAccentPreset('#D9A04A')" title="Orange"></button>
+            <button class="color-swatch" style="background:#9B59B6" onclick="setAccentPreset('#9B59B6')" title="Purple"></button>
+            <button class="color-swatch" style="background:#1ABC9C" onclick="setAccentPreset('#1ABC9C')" title="Teal"></button>
+            <button class="color-swatch" style="background:#E74C8B" onclick="setAccentPreset('#E74C8B')" title="Pink"></button>
+            <button class="color-swatch" style="background:#F1C40F" onclick="setAccentPreset('#F1C40F')" title="Yellow"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <h3>Preferences</h3>
+
+      <div class="setting-row">
+        <label for="sort-mods-select">Default Mod Sort</label>
+        <select id="sort-mods-select" onchange="saveSetting('sort_mods_by', this.value)">
+          <option value="name">Name (A-Z)</option>
+          <option value="name_desc">Name (Z-A)</option>
+          <option value="size">Size (largest first)</option>
+          <option value="status">Status (enabled first)</option>
+        </select>
+      </div>
+
+      <div class="setting-row">
+        <label for="confirm-remove-cb">Confirm before removing mods</label>
+        <label class="toggle-switch">
+          <input type="checkbox" id="confirm-remove-cb" checked onchange="saveSetting('confirm_remove', this.checked)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="setting-row">
+        <label for="log-lines-input">Log lines to display</label>
+        <input type="number" id="log-lines-input" value="500" min="100" max="5000" step="100"
+               onchange="saveSetting('log_lines', parseInt(this.value))">
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <button class="btn btn-primary" onclick="saveAllSettings()">Save Settings</button>
+      <button class="btn" onclick="resetSettings()" style="margin-left:8px;">Reset to Defaults</button>
+    </div>
+  </div>
+
+  <!-- Note edit modal -->
+  <div id="note-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Edit Note for <span id="note-modal-mod"></span></h3>
+      <textarea id="note-modal-text" rows="4" placeholder="Add a note about this mod..."></textarea>
+      <div class="modal-actions">
+        <button class="btn btn-primary" onclick="saveNote()">Save</button>
+        <button class="btn" onclick="closeNoteModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screenshot lightbox -->
+  <div id="lightbox" class="modal hidden" onclick="closeLightbox()">
+    <img id="lightbox-img" src="" alt="Screenshot">
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
