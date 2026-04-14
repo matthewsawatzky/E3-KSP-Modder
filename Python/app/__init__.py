@@ -38,11 +38,11 @@ def create_app():
     def index():
         return app.send_static_file('index.html')
 
-    from app.routes.setup import setup_bp
-    from app.routes.mods import mods_bp
-    from app.routes.saves import saves_bp
-    from app.routes.logs import logs_bp
-    from app.routes.info import info_bp
+    from Python.app.routes.setup import setup_bp
+    from Python.app.routes.mods import mods_bp
+    from Python.app.routes.saves import saves_bp
+    from Python.app.routes.logs import logs_bp
+    from Python.app.routes.info import info_bp
 
     app.register_blueprint(setup_bp)
     app.register_blueprint(mods_bp)

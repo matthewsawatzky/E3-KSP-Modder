@@ -1,7 +1,7 @@
 import os
 from flask import Blueprint, jsonify
-from app import load_config
-from app.services.save_reader import list_saves, backup_save
+from Python.app import load_config
+from Python.app.services.save_reader import list_saves, backup_save
 
 saves_bp = Blueprint('saves', __name__)
 

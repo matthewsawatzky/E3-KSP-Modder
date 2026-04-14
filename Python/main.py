@@ -25,7 +25,7 @@ def open_browser():
 
 if __name__ == '__main__':
     ensure_config()
-    from app import create_app
+    from Python.app import create_app
     app = create_app()
     print("KSP Moder running at http://localhost:5050")
     threading.Timer(1.0, open_browser).start()

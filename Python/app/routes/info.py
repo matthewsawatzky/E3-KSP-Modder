@@ -1,7 +1,7 @@
 import os
 from flask import Blueprint, jsonify, send_from_directory
-from app import load_config
-from app.services.disk_usage import get_disk_usage, get_game_version, list_screenshots, list_crafts
+from Python.app import load_config
+from Python.app.services.disk_usage import get_disk_usage, get_game_version, list_screenshots, list_crafts
 
 info_bp = Blueprint('info', __name__)
 

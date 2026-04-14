@@ -1,7 +1,7 @@
 import os
 from flask import Blueprint, jsonify, request
-from app import load_config, save_config
-from app.services.mod_manager import (
+from Python.app import load_config, save_config
+from Python.app.services.mod_manager import (
     list_mods, detect_conflicts, toggle_mod, remove_mod, add_mod,
     get_enabled_mod_names, apply_profile
 )

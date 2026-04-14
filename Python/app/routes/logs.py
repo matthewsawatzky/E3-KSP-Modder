@@ -1,7 +1,7 @@
 import os
 from flask import Blueprint, jsonify, request
-from app import load_config
-from app.services.log_reader import read_log, scan_mod_errors
+from Python.app import load_config
+from Python.app.services.log_reader import read_log, scan_mod_errors
 
 logs_bp = Blueprint('logs', __name__)
 
@@ -38,7 +38,7 @@ def api_mod_errors():
     if not ksp:
         return jsonify({'error': 'No KSP path configured'}), 400
 
-    from app.services.mod_manager import list_mods
+    from Python.app.services.mod_manager import list_mods
     mod_names = [m['name'] for m in list_mods(ksp)]
 
     result = scan_mod_errors(ksp, mod_names)

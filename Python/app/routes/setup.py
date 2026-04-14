@@ -1,7 +1,7 @@
 import os
 from flask import Blueprint, jsonify, request
-from app import load_config, save_config
-from app.services.game_finder import detect_installs, validate_ksp_install
+from Python.app import load_config, save_config
+from Python.app.services.game_finder import detect_installs, validate_ksp_install
 
 setup_bp = Blueprint('setup', __name__)
 
