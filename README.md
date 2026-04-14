@@ -19,7 +19,7 @@ A local web-based mod manager for Kerbal Space Program. Browse and toggle mods i
 
 ### 1. Clone the repo
 ```bash
-git clone https://github.com/your-username/KSP-moder.git
+git clone https://github.com/matthewsawatzky/KSP-moder.git
 cd KSP-moder
 ```
 
